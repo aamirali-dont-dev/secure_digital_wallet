@@ -29,38 +29,67 @@ class Digital_Wallet:
     #chunk 3: wallet operations
     def deposit(self, amount):
         if amount <= 0:
-            print(f"Deposit of {amount} is zero or negative. Don't be silly!")
+            print(f"Deposit of {amount} is not allowed. It's zero or negative. Don't be silly!")
         else:
             self.__balance += amount
-            self.__transaction_history.append(f"Transaction ID: {self.__transaction_id}, Previous Balance: {self.__balance - amount}, Deposit: {amount}, New Balance: {self.__balance}")
-            self.__transaction_id += 1
+            self.__transaction_history.append(f"Transaction ID: {self.__transaction_id}, Nature: Cr, Previous Balance: {self.__balance - amount}, Deposit: {amount}, New Balance: {self.__balance}")
             print(f"Successfully deposited {amount}. {self.__transaction_history[-1]}")
-    
+            self.__transaction_id += 1
+            return True
+        return False
+
     def withdraw(self, amount):
         if amount <= 0:
-            print(f"Withdrawal of {amount} is zero or negative. Shararti!")
+            print(f"Withdrawal of {amount} is not allowed. It's zero or negative. Shararti!")
         elif amount > self.__balance:
             print(f"Insufficient funds to withdrawal {amount}. Current balance: {self.__balance} Try again shararti")
         else:
             self.__balance -= amount
-            self.__transaction_history.append(f"Transaction ID: {self.__transaction_id}, Previous Balance: {self.__balance + amount}, Withdrawal: {amount}, New Balance: {self.__balance}")
-            self.__transaction_id += 1
+            self.__transaction_history.append(f"Transaction ID: {self.__transaction_id}, Nature: Dr, Previous Balance: {self.__balance + amount}, Withdrawal: {amount}, New Balance: {self.__balance}")
             print(f"Successfully withdrew {amount}. {self.__transaction_history[-1]}")
+            self.__transaction_id += 1
+            return True
+        return False
+    
+    def transfer(self, amount, receiver_wallet):
+        if amount <= 0:
+            print(f"Transfer of {amount} is not allowed. It's zero or negative. Shararti!")
+            return False
+        elif not isinstance(receiver_wallet, Digital_Wallet):
+            print("Receiver wallet does not exist. Shararti!")
+            return False
+        elif receiver_wallet == self:
+            print("Cannot transfer to the same wallet. Shararti!")
+            return False
+        elif amount > self.__balance:
+            print(f"Insufficient funds to transfer {amount}. Current balance: {self.__balance} Try again shararti")
+            return False
+        else:
+            self.__balance -= amount
+            self.__transaction_history.append(f"Transaction ID: {self.__transaction_id}, Nature: Dr, Previous Balance: {self.__balance + amount}, Transfer to Wallet ID: {receiver_wallet.wallet_id}, Amount: {amount}, New Balance: {self.__balance}")
+            self.__transaction_id += 1
+            receiver_wallet.__balance += amount
+            receiver_wallet.__transaction_history.append(f"Transaction ID: {receiver_wallet.__transaction_id}, Nature: Cr, Previous Balance: {receiver_wallet.__balance - amount}, Transfer from Wallet ID: {self.wallet_id}, Amount: {amount}, New Balance: {receiver_wallet.__balance}")
+            receiver_wallet.__transaction_id += 1
+            print(f"Successfully transferred {amount} to {receiver_wallet.owner_name}")
+            return True
 
-w = Digital_Wallet("W123", "Alice", 1000)
+# test cases for chunk 4
+alice = Digital_Wallet("W123", "Alice", 1000)
+bob = Digital_Wallet("W456", "Bob", 200)
 
-w.deposit(500)
-print(w.get_balance())               # 1500
+alice.deposit(500)
+alice.transfer(300, bob)          
+print(alice.get_balance())      
+print(bob.get_balance())       
 
-w.withdraw(200)
-print(w.get_balance())               # 1300
+alice.transfer(5000, bob)       
+alice.transfer(0, bob)        
+alice.transfer(-50, bob)        
+alice.transfer(100, alice)       
+alice.transfer(100, "W999")      
+print(alice.get_balance())       
+print(bob.get_balance())         
 
-w.withdraw(5000)                     # rejected: insufficient funds
-w.withdraw(0)                        # rejected: invalid amount
-w.withdraw(-10)                      # rejected: invalid amount
-print(w.get_balance())               # still 1300
-
-w.withdraw(1300)                     # exact balance, should succeed
-print(w.get_balance())               # 0
-
-print(w.get_transaction_history())   # deposit, 2 withdrawals, no trace of rejected attempts
+print(alice.get_transaction_history()[-1])
+print(bob.get_transaction_history())
