@@ -74,22 +74,15 @@ class Digital_Wallet:
             print(f"Successfully transferred {amount} to {receiver_wallet.owner_name}")
             return True
 
-# test cases for chunk 4
-alice = Digital_Wallet("W123", "Alice", 1000)
-bob = Digital_Wallet("W456", "Bob", 200)
+    def Full_Transaction_History(self):
+        if self.get_transaction_history() == []:
+            print("No transactions have been made yet.")
+        else:
+            for transaction in self.get_transaction_history():
+                print(f"Owner Name: {self.owner_name}, Wallet ID: {self.wallet_id} ")
+                print(transaction)
 
-alice.deposit(500)
-alice.transfer(300, bob)          
-print(alice.get_balance())      
-print(bob.get_balance())       
-
-alice.transfer(5000, bob)       
-alice.transfer(0, bob)        
-alice.transfer(-50, bob)        
-alice.transfer(100, alice)       
-alice.transfer(100, "W999")      
-print(alice.get_balance())       
-print(bob.get_balance())         
-
-print(alice.get_transaction_history()[-1])
-print(bob.get_transaction_history())
+carol = Digital_Wallet("W789", "Carol", 50)
+carol.deposit(100)
+carol.withdraw(30)
+carol.Full_Transaction_History()
