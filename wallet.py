@@ -1,5 +1,5 @@
 # chunk 1: class creation and encapsulation
-class Digital_Wallet:
+class DigitalWallet:
     def __init__(self, wallet_id, owner_name, balance=0):
         self.wallet_id = wallet_id
         self.owner_name = owner_name
@@ -21,11 +21,10 @@ class Digital_Wallet:
     def get_transaction_history(self):
         return self.__transaction_history.copy()
 
-    def display_wallet_info(self):
+    def display_wallet(self):
         print(f"Wallet ID: {self.wallet_id}")
         print(f"Owner Name: {self.owner_name}")
         print(f"Balance: {self.get_balance()}")
-        return f"Wallet ID: {self.wallet_id}, Owner Name: {self.owner_name}, Balance: {self.get_balance()}"
 
     #chunk 3: wallet operations
     def deposit(self, amount):
@@ -56,7 +55,7 @@ class Digital_Wallet:
         if amount <= 0:
             print(f"Transfer of {amount} is not allowed. It's zero or negative. Shararti!")
             return False
-        elif not isinstance(receiver_wallet, Digital_Wallet):
+        elif not isinstance(receiver_wallet, DigitalWallet):
             print("Receiver wallet does not exist. Shararti!")
             return False
         elif receiver_wallet == self:
@@ -81,13 +80,13 @@ class Digital_Wallet:
             print("No transactions have been made yet.")
         else:
             print("Here's the full transaction history of your wallet:")
+            print(f"Owner Name: {self.owner_name}, Wallet ID: {self.wallet_id}")
             for transaction in self.get_transaction_history():
-                print(f"Owner Name: {self.owner_name}, Wallet ID: {self.wallet_id} ")
                 print(transaction)
 
-test_ob1 = Digital_Wallet("001", "Saboor", 1000)
-test_ob2 = Digital_Wallet("002", "Ali", 500)
-test_ob3 = Digital_Wallet("003", "Danika", 2000)
+test_ob1 = DigitalWallet("001", "Saboor", 1000)
+test_ob2 = DigitalWallet("002", "Ali", 500)
+test_ob3 = DigitalWallet("003", "Danika", 2000)
 
 # chunk 6: building a dictionary for easy search by wallet_id
 wallets = {"001": test_ob1, "002": test_ob2, "003": test_ob3}
@@ -95,14 +94,74 @@ wallets = {"001": test_ob1, "002": test_ob2, "003": test_ob3}
 # loop to display all wallets and their balances
 def display_all_wallets():
     for x in wallets:
-        wallets[x].display_wallet_info()
+        wallets[x].display_wallet()
 
 # a search by ID function
 def search_walletid(wallet_id):
     if wallet_id in wallets:
         print("Wallet Found!")
-        print(f"{wallets[wallet_id].display_wallet_info()}")
+        wallets[wallet_id].display_wallet()
     else:
         print(f"Wallet ID {wallet_id} does not exist. Buffoon!")
 
 search_walletid("002")
+
+# chunk 7: test cases
+print("1. Starting state")
+display_all_wallets()                      # 001: 1000, 002: 500, 003: 2000
+
+print("\n 2. Deposit")
+test_ob1.deposit(500)                      # success -> 001 = 1500
+print("\n Rejected deposits ")
+test_ob1.deposit(0)                        # rejected
+test_ob1.deposit(-20)                      # rejected
+print("001 balance:", test_ob1.get_balance())   # still 1500
+
+print("\n 3. Withdraw")
+test_ob2.withdraw(200)                     # success -> 002 = 300
+print("\nRejected withdrawals")
+test_ob2.withdraw(5000)                    # rejected: insufficient funds
+test_ob2.withdraw(0)                       # rejected: zero
+test_ob2.withdraw(-10)                     # rejected: negative
+print("002 balance:", test_ob2.get_balance())   # still 300
+
+print("\n 4. Transfer")
+test_ob1.transfer(300, test_ob3)           # success -> 001 = 1200, 003 = 2300
+print("\n Rejected transfers ")
+test_ob2.transfer(5000, test_ob1)          # rejected: insufficient funds
+test_ob1.transfer(0, test_ob3)             # rejected: zero
+test_ob1.transfer(-50, test_ob3)           # rejected: negative
+test_ob1.transfer(100, test_ob1)           # rejected: same wallet
+test_ob1.transfer(100, "999")              # rejected: not a wallet
+print("001 balance:", test_ob1.get_balance())   # still 1200
+print("003 balance:", test_ob3.get_balance())   # still 2300
+
+print("\n 5. Boundary: withdraw the exact balance")
+test_ob2.withdraw(300)                     # success -> 002 = 0
+
+print("\n 6. Search")
+search_walletid("002")                     # found
+search_walletid("999")                     # not found, no crash
+
+print("\n=== 7. Encapsulation ===")
+try:
+    print(test_ob1.__balance)              # must NOT work
+except AttributeError:
+    print("Direct access blocked: AttributeError (encapsulation works)")
+
+history = test_ob1.get_transaction_history()
+history.append("hacked entry")             # tamper with the copy
+print("Original history length:", len(test_ob1.get_transaction_history()))  # still 2
+
+print("\n=== 8. Constructor validation / empty history ===")
+bad = DigitalWallet("004", "Zara", -50)    # warning, balance set to 0
+print("004 balance:", bad.get_balance())   # 0
+bad.Full_Transaction_History()             # "No transactions have been made yet."
+
+print("\n=== 9. Transaction histories ===")
+test_ob1.Full_Transaction_History()        # 2 records: IDs 1 and 2
+test_ob2.Full_Transaction_History()        # 2 records: IDs 1 and 2
+test_ob3.Full_Transaction_History()        # 1 record: ID 1
+
+print("\n=== 10. Final balances ===")
+display_all_wallets()                      # 001: 1200, 002: 0, 003: 2300
