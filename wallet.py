@@ -25,6 +25,7 @@ class Digital_Wallet:
         print(f"Wallet ID: {self.wallet_id}")
         print(f"Owner Name: {self.owner_name}")
         print(f"Balance: {self.get_balance()}")
+        return f"Wallet ID: {self.wallet_id}, Owner Name: {self.owner_name}, Balance: {self.get_balance()}"
 
     #chunk 3: wallet operations
     def deposit(self, amount):
@@ -74,15 +75,34 @@ class Digital_Wallet:
             print(f"Successfully transferred {amount} to {receiver_wallet.owner_name}")
             return True
 
+    # chunk 5: full transaction history using public method for security reasons
     def Full_Transaction_History(self):
         if self.get_transaction_history() == []:
             print("No transactions have been made yet.")
         else:
+            print("Here's the full transaction history of your wallet:")
             for transaction in self.get_transaction_history():
                 print(f"Owner Name: {self.owner_name}, Wallet ID: {self.wallet_id} ")
                 print(transaction)
 
-carol = Digital_Wallet("W789", "Carol", 50)
-carol.deposit(100)
-carol.withdraw(30)
-carol.Full_Transaction_History()
+test_ob1 = Digital_Wallet("001", "Saboor", 1000)
+test_ob2 = Digital_Wallet("002", "Ali", 500)
+test_ob3 = Digital_Wallet("003", "Danika", 2000)
+
+# chunk 6: building a dictionary for easy search by wallet_id
+wallets = {"001": test_ob1, "002": test_ob2, "003": test_ob3}
+
+# loop to display all wallets and their balances
+def display_all_wallets():
+    for x in wallets:
+        wallets[x].display_wallet_info()
+
+# a search by ID function
+def search_walletid(wallet_id):
+    if wallet_id in wallets:
+        print("Wallet Found!")
+        print(f"{wallets[wallet_id].display_wallet_info()}")
+    else:
+        print(f"Wallet ID {wallet_id} does not exist. Buffoon!")
+
+search_walletid("002")
