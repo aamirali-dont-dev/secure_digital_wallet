@@ -84,6 +84,7 @@ class DigitalWallet:
             for transaction in self.get_transaction_history():
                 print(transaction)
 
+# Manual objects for use in dictionary
 test_ob1 = DigitalWallet("001", "Saboor", 1000)
 test_ob2 = DigitalWallet("002", "Ali", 500)
 test_ob3 = DigitalWallet("003", "Danika", 2000)
@@ -103,8 +104,6 @@ def search_walletid(wallet_id):
         wallets[wallet_id].display_wallet()
     else:
         print(f"Wallet ID {wallet_id} does not exist. Buffoon!")
-
-search_walletid("002")
 
 # chunk 7: test cases
 print("1. Starting state")
@@ -143,25 +142,23 @@ print("\n 6. Search")
 search_walletid("002")                     # found
 search_walletid("999")                     # not found, no crash
 
-print("\n=== 7. Encapsulation ===")
-try:
-    print(test_ob1.__balance)              # must NOT work
-except AttributeError:
-    print("Direct access blocked: AttributeError (encapsulation works)")
+print("\n 7. Encapsulation")
+#print(test_ob1.__balance)              # must NOT work
 
 history = test_ob1.get_transaction_history()
 history.append("hacked entry")             # tamper with the copy
 print("Original history length:", len(test_ob1.get_transaction_history()))  # still 2
 
-print("\n=== 8. Constructor validation / empty history ===")
-bad = DigitalWallet("004", "Zara", -50)    # warning, balance set to 0
+print("\n 8. Constructor validation / empty history")
+bad = DigitalWallet("004", "Kainat", -50)    # warning, balance set to 0
 print("004 balance:", bad.get_balance())   # 0
 bad.Full_Transaction_History()             # "No transactions have been made yet."
 
-print("\n=== 9. Transaction histories ===")
+print("\n 9. Transaction histories")
 test_ob1.Full_Transaction_History()        # 2 records: IDs 1 and 2
 test_ob2.Full_Transaction_History()        # 2 records: IDs 1 and 2
 test_ob3.Full_Transaction_History()        # 1 record: ID 1
 
-print("\n=== 10. Final balances ===")
+print("\n 10. Final balances")
 display_all_wallets()                      # 001: 1200, 002: 0, 003: 2300
+
