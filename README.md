@@ -2,7 +2,7 @@
 
 A console-based digital wallet system written in Python for **Assignment 1** of *Introduction to Object Oriented Programming* (BS Financial Technology, Government College University, Lahore).
 
-**Author:** [Your Name] | **Roll No:** [Your Roll No]
+**Author:** Aamir Ali | **Roll No:** 6911-BS-FT-24
 
 **Public repository:** https://github.com/aamirali-dont-dev/secure_digital_wallet
 The commit history there shows the program being built in stages.
